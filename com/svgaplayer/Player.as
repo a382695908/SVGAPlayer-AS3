@@ -96,7 +96,6 @@
 		}
 		
 		private function update() {
-			trace(this.currentFrame)
 			for (var idx:* in this.videoItem.sprites) {
 				var spriteItem: com.svgaplayer.SpriteEntity = this.videoItem.sprites[idx];
 				var childSprite: DisplayObject = this.rootLayer.getChildAt(idx)
@@ -104,6 +103,16 @@
 					var frameItem: com.svgaplayer.FrameEntity = spriteItem.frames[this.currentFrame];
 					childSprite.alpha = frameItem.alpha;
 					childSprite.transform.matrix = new Matrix(frameItem.transform.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d, frameItem.transform.tx, frameItem.transform.ty);
+					if (frameItem.maskPath !== null && frameItem.maskSprite === null) {
+						frameItem.createMaskSprite();
+					}
+					if (frameItem.maskSprite != null) {
+						childSprite.mask = frameItem.maskSprite;
+						frameItem.maskSprite.transform.matrix = new Matrix(frameItem.transform.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d, frameItem.transform.tx, frameItem.transform.ty);
+					}
+					else {
+						childSprite.mask = null;
+					}
 				}
 			}
 		}

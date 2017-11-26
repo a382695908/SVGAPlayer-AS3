@@ -11,7 +11,7 @@
 		public function SampleStage() {
 			var parser = new Parser()
 			var player = new Player(this);
-			parser.load("samples/angel.svga", function(videoItem: *){
+			parser.load("samples/rose.svga", function(videoItem: *){
 				player.setVideoItem(videoItem);
 				player.startAnimation();
 			}, function(){

@@ -2,13 +2,17 @@
 	import com.svgaplayer.proto.FrameEntity;
 	import com.svgaplayer.proto.Layout;
 	import com.svgaplayer.proto.Transform;
-	import com.svgaplayer.Transform
+	import com.svgaplayer.Transform;
+	import com.svgaplayer.BezierPath;
+	import flash.display.Sprite;
 	
 	public class FrameEntity {
 
 		public var alpha: Number = 0.0;
 		public var transform: com.svgaplayer.Transform = new com.svgaplayer.Transform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 		public var layout: Rect = new Rect(0, 0, 0, 0);
+		public var maskPath: com.svgaplayer.BezierPath = null;
+		public var maskSprite: flash.display.Sprite = null;
 		
 		public function FrameEntity(spec: com.svgaplayer.proto.FrameEntity) {
 			this.alpha = spec[com.svgaplayer.proto.FrameEntity.ALPHA] || 0.0;
@@ -26,6 +30,16 @@
 				this.transform.tx = spec[com.svgaplayer.proto.FrameEntity.TRANSFORM][com.svgaplayer.proto.Transform.TX] || 0.0;
 				this.transform.ty = spec[com.svgaplayer.proto.FrameEntity.TRANSFORM][com.svgaplayer.proto.Transform.TY] || 0.0;
 			}
+			if (spec[com.svgaplayer.proto.FrameEntity.CLIPPATH]) {
+				this.maskPath = new BezierPath(spec[com.svgaplayer.proto.FrameEntity.CLIPPATH]);
+			}
+		}
+
+		public function createMaskSprite() {
+			this.maskSprite = new Sprite();
+			this.maskSprite.graphics.beginFill(0xffffff);
+			this.maskPath.drawPath(this.maskSprite.graphics);
+			this.maskSprite.graphics.endFill();
 		}
 
 	}
