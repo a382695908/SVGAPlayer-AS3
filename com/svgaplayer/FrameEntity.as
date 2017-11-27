@@ -5,6 +5,9 @@
 	import com.svgaplayer.Transform;
 	import com.svgaplayer.BezierPath;
 	import flash.display.Sprite;
+	import com.svgaplayer.proto.ShapeEntity;
+	import com.svgaplayer.proto.ShapeEntity.ShapeType;
+	import com.svgaplayer.proto.ShapeEntity.ShapeArgs;
 	
 	public class FrameEntity {
 
@@ -13,6 +16,7 @@
 		public var layout: Rect = new Rect(0, 0, 0, 0);
 		public var maskPath: com.svgaplayer.BezierPath = null;
 		public var maskSprite: flash.display.Sprite = null;
+		public var shapes = [];
 		
 		public function FrameEntity(spec: com.svgaplayer.proto.FrameEntity) {
 			this.alpha = spec[com.svgaplayer.proto.FrameEntity.ALPHA] || 0.0;
@@ -33,6 +37,37 @@
 			if (spec[com.svgaplayer.proto.FrameEntity.CLIPPATH]) {
 				this.maskPath = new BezierPath(spec[com.svgaplayer.proto.FrameEntity.CLIPPATH]);
 			}
+			if (spec[com.svgaplayer.proto.FrameEntity.SHAPES]) {
+				var shapesData = spec[com.svgaplayer.proto.FrameEntity.SHAPES];
+				for (var idx: * in shapesData) {
+					var shapeData = shapesData[idx];
+					var path: * = null;
+					if (shapeData.type == com.svgaplayer.proto.ShapeEntity.ShapeType.SHAPE && shapeData.shape.hasD) {
+						path = new BezierPath(shapeData.shape.d);
+					}
+					else if (shapeData.type == com.svgaplayer.proto.ShapeEntity.ShapeType.ELLIPSE && shapeData.hasEllipse) {
+						path = new EllipsePath(shapeData.ellipse.x || 0.0, shapeData.ellipse.y || 0.0, shapeData.ellipse.radiusX || 0.0, shapeData.ellipse.radiusY || 0.0);
+					}
+					else if (shapeData.type == com.svgaplayer.proto.ShapeEntity.ShapeType.RECT && shapeData.hasRect) {
+						path = new RectPath(shapeData.rect.x || 0.0, shapeData.rect.y || 0.0, shapeData.rect.width || 0.0, shapeData.rect.height || 0.0, shapeData.rect.cornerRadius || 0.0);
+					}
+					else if (shapeData.type == com.svgaplayer.proto.ShapeEntity.ShapeType.KEEP) {
+						this.shapes = FrameEntity.lastShapes;
+					}
+					if (path != null) {
+						if (shapeData.transform) {
+							path.transform = new com.svgaplayer.Transform(
+								shapeData.transform.a || 1.0, shapeData.transform.b || 0.0, shapeData.transform.c || 0.0, shapeData.transform.d || 1.0, shapeData.transform.tx || 0.0, shapeData.transform.ty || 0.0
+							);
+						}
+						if (shapeData.styles) {
+							path.styles = shapeData.styles;
+						}
+						this.shapes.push(path);
+					}
+				}
+				FrameEntity.lastShapes = this.shapes;
+			}
 		}
 
 		public function createMaskSprite() {
@@ -41,6 +76,10 @@
 			this.maskPath.drawPath(this.maskSprite.graphics);
 			this.maskSprite.graphics.endFill();
 		}
+		
+		static private var lastShapes = [];
+		
+		
 
 	}
 	
