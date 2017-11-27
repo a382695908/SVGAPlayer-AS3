@@ -10,6 +10,11 @@
 	import flash.sampler.Sample;
 	import flash.display.Sprite;
 	import flash.display.Shape;
+	import flash.display.Loader;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	import flash.net.URLLoaderDataFormat;
+	import flash.display.BitmapData;
 
 	public class Player {
 
@@ -101,7 +106,33 @@
 		}
 		
 		public function setImage(urlORBase64: String, forKey: String) {
-			
+			var self = this;
+			var request = new URLRequest(urlORBase64);
+			var loader:URLLoader = new URLLoader();
+			loader.dataFormat = URLLoaderDataFormat.BINARY;
+			loader.addEventListener(Event.COMPLETE, function() {
+				var imgLoader = new Loader();
+				imgLoader.contentLoaderInfo.addEventListener(Event.INIT, function():void {
+					var bitmapData = new BitmapData(imgLoader.content.width, imgLoader.content.height, true, 0x00000000);
+					bitmapData.draw(imgLoader);
+					self.dynamicImages[forKey] = bitmapData;
+					if (self.rootLayer != null && self.rootLayer != undefined) {
+						for (var idx:* in self.videoItem.sprites) {
+							var spriteItem: com.svgaplayer.SpriteEntity = self.videoItem.sprites[idx];
+							if (spriteItem.imageKey === forKey) {
+								var container: * = self.rootLayer.getChildAt(idx);
+								var bitmapLayer: * = container.getChildAt(0);
+								bitmapLayer.graphics.clear();
+								bitmapLayer.graphics.beginBitmapFill(bitmapData, null, false, true);
+								bitmapLayer.graphics.drawRect(0, 0, bitmapData.width, bitmapData.height);
+								bitmapLayer.graphics.endFill();
+							}
+						}
+					}
+				});
+				imgLoader.loadBytes(loader.data)
+			})
+			loader.load(request);
 		}
 		
 		private var displayObject: MovieClip
@@ -114,6 +145,7 @@
 		private var contentMode = "AspectFit"
 		private var frame: Rect = new Rect(0, 0, 0, 0);
 		private var clipsToBounds = false;
+		private var dynamicImages: Object = new Object();
 		
 		private function setupTicker() {
 			this.displayObject.addEventListener(Event.ENTER_FRAME, this.onTick);
@@ -151,7 +183,7 @@
 				var spriteItem: com.svgaplayer.SpriteEntity = this.videoItem.sprites[idx];
 				var container: Sprite = new Sprite();
 				var bitmapLayer: Sprite = new Sprite();
-				var bitmapData = this.videoItem.images[spriteItem.imageKey];
+				var bitmapData = this.dynamicImages[spriteItem.imageKey] || this.videoItem.images[spriteItem.imageKey];
 				if (bitmapData != null && bitmapData != undefined) {
 					bitmapLayer.graphics.beginBitmapFill(bitmapData, null, false, true);
 					bitmapLayer.graphics.drawRect(0, 0, bitmapData.width, bitmapData.height);

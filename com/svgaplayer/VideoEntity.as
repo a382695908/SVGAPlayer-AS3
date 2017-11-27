@@ -56,7 +56,7 @@
 							resolve();
 						}
 					});
-				loader.loadBytes(imageData)
+					loader.loadBytes(imageData)
 				})()
 			}
 		}
