@@ -38,9 +38,23 @@
 			this.update();
 		}
 		
-		public function clear() {
+		public function setClipsToBounds(clipsToBounds) {
+			this.clipsToBounds = clipsToBounds;
 			if (this.rootLayer) {
-				this.displayObject.removeChild(this.rootLayer);
+				if (this.rootLayer.mask != null) {
+					this.rootLayer.removeChild(this.rootLayer.mask)
+				}
+				if (this.clipsToBounds) {
+					var clipMask: Shape = new Shape();
+					clipMask.graphics.beginFill(0xffffff);
+					clipMask.graphics.drawRect(0, 0, this.videoItem.videoSize.width, this.videoItem.videoSize.height);
+					clipMask.graphics.endFill();
+					this.rootLayer.mask = clipMask;
+					this.rootLayer.addChild(clipMask);
+				}
+				else {
+					this.rootLayer.mask = null;
+				}
 			}
 		}
 		
@@ -49,10 +63,45 @@
 			this.setupTicker();
 		}
 		
+		public function pauseAnimation() {
+			this.stopAnimation(false);
+		}
+		
 		public function stopAnimation(clear: Boolean) {
+			this.destoryTicker();
 			if (clear) {
 				this.clear();
 			}
+		}
+		
+		public function clear() {
+			if (this.rootLayer) {
+				this.displayObject.removeChild(this.rootLayer);
+			}
+		}
+		
+		public function stepToFrame(frame: Number, andPlay: Boolean) {
+			if (frame >= this.videoItem.frames || frame < 0) {
+				return;
+			}
+			this.pauseAnimation();
+			this.currentFrame = frame;
+			this.update();
+			if (andPlay) {
+				this.setupTicker();
+			}
+		}
+		
+		public function stepToPercentage(percentage: Number, andPlay: Boolean) {
+			var frame = Math.floor(percentage * this.videoItem.frames);
+			if (frame >= this.videoItem.frames && frame > 0) {
+				frame = this.videoItem.frames - 1;
+			}
+			this.stepToFrame(frame, andPlay);
+		}
+		
+		public function setImage(urlORBase64: String, forKey: String) {
+			
 		}
 		
 		private var displayObject: MovieClip
@@ -64,9 +113,14 @@
 		private var nextTickTime = 0;
 		private var contentMode = "AspectFit"
 		private var frame: Rect = new Rect(0, 0, 0, 0);
+		private var clipsToBounds = false;
 		
 		private function setupTicker() {
 			this.displayObject.addEventListener(Event.ENTER_FRAME, this.onTick);
+		}
+		
+		private function destoryTicker() {
+			this.displayObject.removeEventListener(Event.ENTER_FRAME, this.onTick);
 		}
 		
 		private function onTick(sender: *) {
@@ -109,13 +163,8 @@
 			}
 			this.rootLayer.width = this.videoItem.videoSize.width;
 			this.rootLayer.height = this.videoItem.videoSize.height;
-			var clipMask: Shape = new Shape();
-			clipMask.graphics.beginFill(0xffffff);
-			clipMask.graphics.drawRect(0, 0, this.videoItem.videoSize.width, this.videoItem.videoSize.height);
-			clipMask.graphics.endFill();
-			this.rootLayer.mask = clipMask;
-			this.rootLayer.addChild(clipMask);
 			this.rootLayer.transform.matrix = new Matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+			this.setClipsToBounds(this.clipsToBounds);
 			this.displayObject.addChild(this.rootLayer);
 		}
 		
@@ -139,7 +188,8 @@
 					translateX = (targetSize.width - imageSize.width * scaleX) / 2.0
 				}
 			}
-			this.rootLayer.transform.matrix = new Matrix(scaleX, 0, 0, scaleY, this.frame.x + translateX, this.frame.y + translateY);
+			this.displayObject.transform.matrix = new Matrix(1.0, 0, 0, 1.0, this.frame.x, this.frame.y);
+			this.rootLayer.transform.matrix = new Matrix(scaleX, 0, 0, scaleY, translateX, translateY);
 		}
 		
 		private function update() {
@@ -173,10 +223,10 @@
 						frameItem.createMaskSprite();
 					}
 					if (frameItem.maskSprite != null) {
-						this.rootLayer.addChild(frameItem.maskSprite);
+						this.displayObject.addChild(frameItem.maskSprite);
+						frameItem.maskSprite.transform.matrix = new Matrix(frameItem.transform.a * this.rootLayer.transform.matrix.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d * this.rootLayer.transform.matrix.d, (frameItem.transform.tx + this.rootLayer.transform.matrix.tx) * this.rootLayer.transform.matrix.a + this.displayObject.transform.matrix.tx, (frameItem.transform.ty + this.rootLayer.transform.matrix.ty) * this.rootLayer.transform.matrix.d + this.displayObject.transform.matrix.ty);
 						childSprite.mask = frameItem.maskSprite;
-						frameItem.maskSprite.transform.matrix = new Matrix(frameItem.transform.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d, frameItem.transform.tx, frameItem.transform.ty);
-						this.rootLayer.removeChild(frameItem.maskSprite);
+						this.displayObject.removeChild(frameItem.maskSprite);
 					}
 					else {
 						childSprite.mask = null;

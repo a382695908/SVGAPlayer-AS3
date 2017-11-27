@@ -21,7 +21,7 @@
 		public function makeStyle(graphics: flash.display.Graphics) {
 			if (this.styles) {
 				if (this.styles.stroke) {
-					graphics.lineStyle(this.styles.strokeWidth || 0.0, (this.styles.stroke.r * 255) << 16 | (this.styles.stroke.g * 255) << 8 | (this.styles.stroke.b * 255), this.styles.stroke.a || 1.0, false, "NORMAL", this.cap(), this.join(), this.styles.miterLimit || 10.0);
+					graphics.lineStyle(this.styles.strokeWidth || 0.0, (this.styles.stroke.r * 255) << 16 | (this.styles.stroke.g * 255) << 8 | (this.styles.stroke.b * 255), this.styles.stroke.a || 1.0, false, "normal", this.cap(), this.join());
 				}
 				else {
 					graphics.lineStyle(0, 0, 0);
@@ -57,13 +57,13 @@
 		
 		private function join() {
 			if (!this.styles.hasLineJoin) {
-				//return null;
+				return null;
 			}
 			if (this.styles.lineJoin == com.svgaplayer.proto.ShapeEntity.ShapeStyle.LineJoin.LineJoin_BEVEL) {
 				return "bevel";
 			}
 			else if (this.styles.lineJoin == com.svgaplayer.proto.ShapeEntity.ShapeStyle.LineJoin.LineJoin_MITER) {
-				return null;
+				return "miter";
 			}
 			else if (this.styles.lineJoin == com.svgaplayer.proto.ShapeEntity.ShapeStyle.LineJoin.LineJoin_ROUND) {
 				return "round";

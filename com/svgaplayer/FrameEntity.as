@@ -15,7 +15,7 @@
 		public var transform: com.svgaplayer.Transform = new com.svgaplayer.Transform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 		public var layout: Rect = new Rect(0, 0, 0, 0);
 		public var maskPath: com.svgaplayer.BezierPath = null;
-		public var maskSprite: flash.display.Sprite = null;
+		public var maskSprite: flash.display.Shape = null;
 		public var shapes = [];
 		
 		public function FrameEntity(spec: com.svgaplayer.proto.FrameEntity) {
@@ -71,7 +71,7 @@
 		}
 
 		public function createMaskSprite() {
-			this.maskSprite = new Sprite();
+			this.maskSprite = new flash.display.Shape();
 			this.maskSprite.graphics.beginFill(0xffffff);
 			this.maskPath.drawPath(this.maskSprite.graphics);
 			this.maskSprite.graphics.endFill();
