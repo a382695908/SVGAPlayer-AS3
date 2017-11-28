@@ -32,7 +32,6 @@
 			this.videoItem = videoItem;
 			this.clear();
 			this.draw();
-			this.update();
 		}
 		
 		public function setFrame(x: Number, y: Number, width: Number, height: Number) {
@@ -66,6 +65,7 @@
 		}
 		
 		public function startAnimation() {
+			this.rootLayer.visible = true;
 			this.stopAnimation(false);
 			this.setupTicker();
 		}
@@ -83,7 +83,7 @@
 		
 		public function clear() {
 			if (this.rootLayer) {
-				this.displayObject.removeChild(this.rootLayer);
+				this.rootLayer.visible = false;
 			}
 		}
 		
@@ -91,6 +91,7 @@
 			if (frame >= this.videoItem.frames || frame < 0) {
 				return;
 			}
+			this.rootLayer.visible = true;
 			this.pauseAnimation();
 			this.currentFrame = frame;
 			this.update();
@@ -150,6 +151,24 @@
 			this.dynamicTexts[forKey] = textObject;
 		}
 		
+		public function clearDynamicObjects() {
+			this.dynamicImages = [];
+			this.dynamicTexts = [];
+			this.draw();
+		}
+		
+		public function onFinished(callback: Function) {
+			this._onFinished = callback;
+		}
+		
+		public function onFrame(callback: Function) {
+			this._onFrame = callback;
+		}
+		
+		public function onPercentage(callback: Function) {
+			this._onPercentage = callback;
+		}
+		
 		private var displayObject: MovieClip
 		private var currentFrame = 0;
 		private var currentTick = 0;
@@ -162,6 +181,9 @@
 		private var clipsToBounds = false;
 		private var dynamicImages: Object = new Object();
 		private var dynamicTexts: Object = new Object();
+		private var _onFinished: Function = null;
+		private var _onFrame: Function = null;
+		private var _onPercentage: Function = null;
 		
 		private function setupTicker() {
 			this.displayObject.addEventListener(Event.ENTER_FRAME, this.onTick);
@@ -184,10 +206,19 @@
 				this.loopCount++;
 				if (this.loops > 0 && this.loopCount >= this.loops) {
 					this.stopAnimation(this.clearsAfterStop);
+					if (this._onFinished != null) {
+						this._onFinished();
+					}
 					return;
 				}
 			}
 			this.update()
+			if (this._onFrame != null) {
+				this._onFrame(this.currentFrame);
+			}
+			if (this._onPercentage != null) {
+				this._onPercentage((this.currentFrame + 1) / this.videoItem.frames);
+			}
 		}
 		
 		private function draw() {
@@ -214,6 +245,7 @@
 			this.rootLayer.transform.matrix = new Matrix(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 			this.setClipsToBounds(this.clipsToBounds);
 			this.displayObject.addChild(this.rootLayer);
+			this.update();
 		}
 		
 		private function resize() {
