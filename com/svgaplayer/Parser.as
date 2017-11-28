@@ -14,7 +14,7 @@
 			var self = this;
 			self.fetch(url, function(byteArray): void {
 				self.parse(byteArray, function(videoItem){ resolve(videoItem); }, function(error){ reject(error); });
-			}, function reject(error): void {
+			}, function(error: Error) {
 				reject(error);
 			});
 		}
@@ -32,7 +32,19 @@
 				} catch (error: Error) {
 					reject(error);
 				}
-			})
+			});
+			loader.addEventListener(IOErrorEvent.IO_ERROR, function(event: *): void {
+				reject(new Error(event.text));
+			});
+			loader.addEventListener(IOErrorEvent.DISK_ERROR, function(event: *): void {
+				reject(new Error(event.text));
+			});
+			loader.addEventListener(IOErrorEvent.NETWORK_ERROR, function(event: *): void {
+				reject(new Error(event.text));
+			});
+			loader.addEventListener(IOErrorEvent.VERIFY_ERROR, function(event: *): void {
+				reject(new Error(event.text));
+			});
 			try {
 				loader.load(request);
 			}

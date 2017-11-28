@@ -145,6 +145,7 @@
 				var textFormat: TextFormat = new TextFormat();
 				textFormat.size = parseInt(textORMap.size.replace("px", ""));
 				textFormat.color = parseInt(textORMap.color.replace("#", "0x"));
+				textFormat.bold = true;
 				textFormat.align = "center";
 				textObject.setTextFormat(textFormat);
 			}

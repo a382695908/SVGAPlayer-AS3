@@ -18,7 +18,7 @@
 		}
 
 		#flashContent {
-			width: 800px;
+			width: 500px;
 			height: 500px;
 			/* background-color: #ffff00; */
 		}
@@ -32,10 +32,11 @@
 <script>
 	var parser = new SVGA.Parser('#flashContent');
 	var player = new SVGA.Player('#flashContent');
-	parser.load('samples/rose.svga', function(videoItem) {
-		player.setContentMode("Fill");
+	parser.load('samples/angel.svga', function(videoItem) { 
 		player.setVideoItem(videoItem);
 		player.startAnimation();
+	}, function(error) {
+		alert(error.message);
 	})
 	// try {
 	// 	var parser = new SVGA.Parser('#flashContent');

@@ -5,10 +5,14 @@
 	import com.svgaplayer.Player;
 	import flash.external.ExternalInterface;
 	import com.svgaplayer.VideoEntity;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
 	
 	public class SVGAPlayerWeb extends MovieClip {
 		
 		public function SVGAPlayerWeb() {
+			this.stage.align = StageAlign.TOP_LEFT;
+			this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			this.sharedPlayer = new Player(this);
 			this.setupInterfaces();
 		}
@@ -94,8 +98,12 @@
 			this.sharedPlayer.setImage(urlORBase64, forKey);
 		}
 		
-		private function SVGAPlayer_Instance_setText(textORMap: *, forKey: String) {
-			this.sharedPlayer.setText(textORMap, forKey);
+		private function SVGAPlayer_Instance_setText(text: String, size: String, color: String, forKey: String) {
+			var obj = new Object();
+			obj.text = text;
+			obj.size = size;
+			obj.color = color;
+			this.sharedPlayer.setText(obj, forKey);
 		}
 		
 		private function SVGAPlayer_Instance_clearDynamicObjects() {

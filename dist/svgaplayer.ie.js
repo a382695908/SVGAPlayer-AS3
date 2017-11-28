@@ -15,10 +15,10 @@
             },
             createHandler: function (callback) {
                 var uuid = global.SVGA.createUUID();
-                global["SVGACB_" + uuid + "_handle"] = function (a, b, c, d, e, f, g) {
+                global["SVGACB_" + uuid + "_handler"] = function (a, b, c, d, e, f, g) {
                     callback(a, b, c, d, e, f, g);
                 };
-                return "SVGACB_" + uuid + "_handle";
+                return "SVGACB_" + uuid + "_handler";
             },
             createSWFObject: function (container, callback) {
                 var uuid = global.SVGA.createUUID();
@@ -81,7 +81,7 @@
                         SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAParser_Instance_load(url, SVGA.createHandler(function (videoItem) {
                                 success(videoItem);
-                            }), SVGA.createHandler(function(message){
+                            }), SVGA.createHandler(function (message) {
                                 failure(new Error(message));
                             }));
                         });
@@ -90,93 +90,98 @@
             },
             Player: function (container) {
                 return {
-                    setLoops: function(value) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    setLoops: function (value) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_setLoops(value);
                         });
                     },
-                    setClearsAfterStop: function(value) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    setClearsAfterStop: function (value) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_setClearsAfterStop(value);
                         });
                     },
-                    setContentMode: function(value) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    setContentMode: function (value) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_setContentMode(value);
                         });
                     },
-                    setClipsToBounds: function(value) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    setClipsToBounds: function (value) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_setClipsToBounds(value);
                         });
                     },
-                    pauseAnimation: function() {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    pauseAnimation: function () {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_pauseAnimation();
                         });
                     },
-                    stopAnimation: function(value) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    stopAnimation: function (value) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_stopAnimation(value || true);
                         });
                     },
-                    clear: function() {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    clear: function () {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_clear();
                         });
                     },
-                    stepToFrame: function(frame, andPlay) {
-                        SVGA.createSWFObject(container, function(swfObject) {
-                            swfObject.SVGAPlayer_Instance_stepToFrame(frame, andPlay || true);
+                    stepToFrame: function (frame, andPlay) {
+                        SVGA.createSWFObject(container, function (swfObject) {
+                            swfObject.SVGAPlayer_Instance_stepToFrame(frame, andPlay === true);
                         });
                     },
-                    stepToPercentage: function(percentage, andPlay) {
-                        SVGA.createSWFObject(container, function(swfObject) {
-                            swfObject.SVGAPlayer_Instance_stepToPercentage(percentage, andPlay || true);
+                    stepToPercentage: function (percentage, andPlay) {
+                        SVGA.createSWFObject(container, function (swfObject) {
+                            swfObject.SVGAPlayer_Instance_stepToPercentage(percentage, andPlay === true);
                         });
                     },
-                    setImage: function(url, forKey) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    setImage: function (url, forKey) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_setImage(url, forKey);
                         });
                     },
-                    setText: function(textORMap, forKey) {
-                        SVGA.createSWFObject(container, function(swfObject) {
-                            swfObject.SVGAPlayer_Instance_setText(textORMap, forKey);
+                    setText: function (textORMap, forKey) {
+                        SVGA.createSWFObject(container, function (swfObject) {
+                            if (typeof textORMap === "object") {
+                                swfObject.SVGAPlayer_Instance_setText(textORMap.text, textORMap.size, textORMap.color, forKey);
+                            }
+                            else {
+                                swfObject.SVGAPlayer_Instance_setText(textORMap, "", "", forKey);
+                            }
                         });
                     },
-                    clearDynamicObjects: function() {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    clearDynamicObjects: function () {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_clearDynamicObjects();
                         });
                     },
-                    onFinished: function(callback) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    onFinished: function (callback) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_onFinished(SVGA.createHandler(callback));
                         });
                     },
-                    onFrame: function(callback) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    onFrame: function (callback) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_onFrame(SVGA.createHandler(callback));
                         });
                     },
-                    onPercentage: function(callback) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    onPercentage: function (callback) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_onPercentage(SVGA.createHandler(callback));
                         });
                     },
-                    setFrame: function(x, y, width, height) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    setFrame: function (x, y, width, height) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_setFrame(x, y, width, height);
                         });
                     },
-                    setVideoItem: function(videoItem) {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    setVideoItem: function (videoItem) {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_setVideoItem(videoItem);
                         });
                     },
-                    startAnimation: function() {
-                        SVGA.createSWFObject(container, function(swfObject) {
+                    startAnimation: function () {
+                        SVGA.createSWFObject(container, function (swfObject) {
                             swfObject.SVGAPlayer_Instance_setFrame(0, 0, swfObject.offsetWidth, swfObject.offsetHeight);
                             swfObject.SVGAPlayer_Instance_startAnimation();
                         });

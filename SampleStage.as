@@ -13,10 +13,11 @@
 			var player = new Player(this);
 			player.setFrame(0, 0, 750, 750);
 			player.setClipsToBounds(true);
-			parser.load("samples/rose.svga", function(videoItem: *){
+			parser.load("samples/angel.svga", function(videoItem: *){
 				player.setVideoItem(videoItem);
 				player.startAnimation();
-			}, function(){
+			}, function(e: Error){
+				trace(e)
 			})
 		}
 		
