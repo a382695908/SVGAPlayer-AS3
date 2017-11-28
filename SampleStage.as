@@ -4,6 +4,7 @@
 	import com.svgaplayer.Parser;
 	import com.svgaplayer.Player;
 	import flash.utils.*;
+	import flash.external.ExternalInterface;
 	
 	public class SampleStage extends MovieClip {
 		
