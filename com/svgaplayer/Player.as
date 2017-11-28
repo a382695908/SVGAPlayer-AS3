@@ -15,6 +15,8 @@
 	import flash.net.URLRequest;
 	import flash.net.URLLoaderDataFormat;
 	import flash.display.BitmapData;
+	import flash.text.TextField;
+	import flash.text.TextFormat;
 
 	public class Player {
 
@@ -135,6 +137,19 @@
 			loader.load(request);
 		}
 		
+		public function setText(textORMap: *, forKey: String) {
+			var textObject: TextField = new TextField();
+			if (textORMap is Object) {
+				textObject.text = textORMap.text;
+				var textFormat: TextFormat = new TextFormat();
+				textFormat.size = parseInt(textORMap.size.replace("px", ""));
+				textFormat.color = parseInt(textORMap.color.replace("#", "0x"));
+				textFormat.align = "center";
+				textObject.setTextFormat(textFormat);
+			}
+			this.dynamicTexts[forKey] = textObject;
+		}
+		
 		private var displayObject: MovieClip
 		private var currentFrame = 0;
 		private var currentTick = 0;
@@ -146,6 +161,7 @@
 		private var frame: Rect = new Rect(0, 0, 0, 0);
 		private var clipsToBounds = false;
 		private var dynamicImages: Object = new Object();
+		private var dynamicTexts: Object = new Object();
 		
 		private function setupTicker() {
 			this.displayObject.addEventListener(Event.ENTER_FRAME, this.onTick);
@@ -233,6 +249,14 @@
 				if (this.currentFrame < spriteItem.frames.length) {
 					var frameItem: com.svgaplayer.FrameEntity = spriteItem.frames[this.currentFrame];
 					childSprite.alpha = frameItem.alpha;
+					var bitmapLayer: * = childSprite.getChildAt(0);
+					if (this.dynamicImages[spriteItem.imageKey]) {
+						var bitmapData = this.dynamicImages[spriteItem.imageKey];
+						bitmapLayer.transform.matrix = new Matrix(frameItem.layout.width / bitmapData.width, 0.0, 0.0, frameItem.layout.height / bitmapData.height, 0.0, 0.0);
+					}
+					else {
+						bitmapLayer.transform.matrix = null;
+					}
 					if (frameItem.shapes.length > 0) {
 						var vectorLayer: * = childSprite.getChildAt(1);
 						while (vectorLayer.numChildren > 0) {
@@ -248,6 +272,19 @@
 								shapeLayer.transform.matrix = new Matrix(t.a, t.b, t.c, t.d, t.tx, t.ty);
 							}
 							vectorLayer.addChild(shapeLayer);
+						}
+					}
+					if (this.dynamicTexts[spriteItem.imageKey]) {
+						var textObject = this.dynamicTexts[spriteItem.imageKey];
+						textObject.width = frameItem.layout.width;
+						var textMetrics = textObject.getLineMetrics(0);
+						textObject.transform.matrix = new Matrix(1.0, 0.0, 0.0, 1.0, 0.0, (frameItem.layout.height - textMetrics.ascent - textMetrics.descent) / 2);
+						if (childSprite.numChildren < 3) {
+							childSprite.addChild(textObject);
+						}
+						else {
+							childSprite.removeChild(childSprite.getChildAt(2));
+							childSprite.addChild(textObject);
 						}
 					}
 					childSprite.transform.matrix = new Matrix(frameItem.transform.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d, frameItem.transform.tx, frameItem.transform.ty);
@@ -266,6 +303,7 @@
 				}
 			}
 		}
+		
 
 	}
 	

@@ -3,7 +3,7 @@
 	import flash.display.MovieClip;
 	import com.svgaplayer.Parser;
 	import com.svgaplayer.Player;
-	
+	import flash.utils.*;
 	
 	public class SampleStage extends MovieClip {
 		
@@ -16,6 +16,11 @@
 				player.setVideoItem(videoItem);
 				player.startAnimation();
 				player.setImage("samples/avatar.png", "99");
+				player.setText({
+					text: "Hello, World!",
+					size: "34px",
+					color: "#ffff00"
+				}, "banner");
 			}, function(){
 			})
 		}
