@@ -7,10 +7,12 @@
 	import com.svgaplayer.VideoEntity;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.system.Security;
 	
 	public class SVGAPlayerWeb extends MovieClip {
 		
 		public function SVGAPlayerWeb() {
+			Security.allowDomain("*")
 			this.stage.align = StageAlign.TOP_LEFT;
 			this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			this.sharedPlayer = new Player(this);

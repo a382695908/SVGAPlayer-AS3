@@ -6,6 +6,7 @@
 	import flash.display.BitmapData;
 	import flash.display.Bitmap;
 	import flash.events.*;
+	import flash.geom.Rectangle;
 	
 	public class VideoEntity {
 
@@ -46,11 +47,9 @@
 				(function() {
 					var imageKey = imageDatas[idx].key;
 					var imageData = imageDatas[idx].value;
-					var loader = new Loader();
+					var loader: Loader = new Loader();
 					loader.contentLoaderInfo.addEventListener(Event.INIT, function():void {
-						var bitmapData = new BitmapData(loader.content.width, loader.content.height, true, 0x00000000);
-						bitmapData.draw(loader)
-						self.images[imageKey] = bitmapData;
+						self.images[imageKey] = loader.content.bitmapData;
 						done++;
 						if (done >= count) {
 							resolve();

@@ -32,38 +32,12 @@
 <script>
 	var parser = new SVGA.Parser('#flashContent');
 	var player = new SVGA.Player('#flashContent');
-	parser.load('samples/angel.svga', function(videoItem) { 
+	parser.load('samples/rose.svga', function(videoItem) { 
 		player.setVideoItem(videoItem);
 		player.startAnimation();
 	}, function(error) {
 		alert(error.message);
 	})
-	// try {
-	// 	var parser = new SVGA.Parser('#flashContent');
-	// 	// var player = new SVGA.Player('#flashContent');
-	// 	//parser.load("samples/rose.svga");
-		
-	// } catch (error) {
-	// 	alert(error.message);
-	// }
-	// var obj = document.getElementById('flashPlayerWebKit') || document.getElementById('flashPlayer')
-
-	// var successHandler = function (videoItemRef) {
-	// 	//console.log(videoItemRef);
-	// 	obj.SVGAPlayer_Instance_setFrame(0, 0, 500, 500);
-	// 	obj.SVGAPlayer_Instance_setVideoItem(videoItemRef);
-	// 	obj.SVGAPlayer_Instance_startAnimation();
-	// 	// setTimeout(function(){
-	// 	// 	document.getElementById('flashPlayer').SVGAPlayer_Instance_pauseAnimation();
-	// 	// }, 4000)
-	// }
-	// var failureHandler = function (message) {
-	// 	// console.error(message);
-	// }
-	// setTimeout(function () {
-	// 	// console.log("ready");
-	// 	obj.SVGAParser_Instance_load("samples/rose.svga", "successHandler", "failureHandler");
-	// }, 500)
 </script>
 
 </html>

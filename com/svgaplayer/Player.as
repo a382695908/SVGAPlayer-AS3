@@ -116,8 +116,7 @@
 			loader.addEventListener(Event.COMPLETE, function() {
 				var imgLoader = new Loader();
 				imgLoader.contentLoaderInfo.addEventListener(Event.INIT, function():void {
-					var bitmapData = new BitmapData(imgLoader.content.width, imgLoader.content.height, true, 0x00000000);
-					bitmapData.draw(imgLoader);
+					var bitmapData = imgLoader.content.bitmapData;
 					self.dynamicImages[forKey] = bitmapData;
 					if (self.rootLayer != null && self.rootLayer != undefined) {
 						for (var idx:* in self.videoItem.sprites) {
@@ -290,8 +289,8 @@
 					else {
 						bitmapLayer.transform.matrix = null;
 					}
+					var vectorLayer: * = childSprite.getChildAt(1);
 					if (frameItem.shapes.length > 0) {
-						var vectorLayer: * = childSprite.getChildAt(1);
 						while (vectorLayer.numChildren > 0) {
 							vectorLayer.removeChild(vectorLayer.getChildAt(0));
 						}

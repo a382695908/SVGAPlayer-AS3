@@ -12,8 +12,8 @@
 			var parser = new Parser()
 			var player = new Player(this);
 			player.setFrame(0, 0, 750, 750);
-			player.setClipsToBounds(true);
-			parser.load("samples/angel.svga", function(videoItem: *){
+			//player.setClipsToBounds(true);
+			parser.load("samples/rose.svga", function(videoItem: *){
 				player.setVideoItem(videoItem);
 				player.startAnimation();
 			}, function(e: Error){
