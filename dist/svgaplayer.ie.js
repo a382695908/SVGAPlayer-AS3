@@ -1,6 +1,7 @@
 (function (global) {
     if (typeof global.SVGA === "undefined") {
         global.SVGA = {
+            SWFLocation: "SVGAPlayerWeb.swf",
             createUUID: function () {
                 var s = [];
                 var hexDigits = "0123456789abcdef";
@@ -42,7 +43,7 @@
                     (function (element) {
                         var attr = document.createElement("param");
                         attr.setAttribute("name", "movie");
-                        attr.setAttribute("value", "SVGAPlayerWeb.swf");
+                        attr.setAttribute("value", global.SVGA.SWFLocation);
                         element.appendChild(attr);
                     })(element);
                     (function (element) {
